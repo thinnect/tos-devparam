@@ -14,8 +14,8 @@ generic module AtmegaFuseParameterP() {
 }
 implementation {
 
-	PROGMEM const char m_lfuse_id[] = "hfuse";
-	PROGMEM const char m_hfuse_id[] = "lfuse";
+	PROGMEM const char m_lfuse_id[] = "lfuse";
+	PROGMEM const char m_hfuse_id[] = "hfuse";
 	PROGMEM const char m_efuse_id[] = "efuse";
 	PROGMEM const char m_lock_id[] = "lock";
 
