@@ -53,7 +53,7 @@ implementation {
 	task void uidhash() {
 		char id[sizeof(m_uidhash_id)];
 		nx_uint32_t uh;
-		uh = IDENT_TIMESTAMP;
+		uh = IDENT_UIDHASH;
 		strcpy_P(id, m_uidhash_id);
 		signal Uidhash.value(id, DP_TYPE_RAW, &uh, sizeof(uh));
 	}
