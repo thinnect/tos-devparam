@@ -50,7 +50,7 @@ implementation {
 			if(gps != m_gps[coord]) {
 				char id[16+1];
 				parameterIdCopy(id, coord);
-				if(call NvParameter.store[coord](id, value, length) == SUCCESS) {
+				if(call NvParameter.store[coord](id, &gps, sizeof(gps)) == SUCCESS) {
 					m_gps[coord] = gps;
 					m_request = coord;
 					post coordinatetask();
