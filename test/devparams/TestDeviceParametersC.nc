@@ -15,6 +15,9 @@ implementation {
 	components BootInfoC;
 	components MCUSRInfoC;
 
+	// Enable communication through serial interface
+	components DeviceParametersSerialC;
+
 	components MainC;
 	components new Boot2SplitControlC("b", "ser") as StartSerial;
 	StartSerial.Boot -> MainC;

@@ -5,9 +5,6 @@
 #include "sec_tmilli.h"
 #include "DeviceParameters.h"
 generic module DeviceParametersP(uint16_t g_period_s, uint8_t g_parameters) {
-	provides {
-		interface SerialPacketInfo;
-	}
 	uses {
 		interface Send[uint8_t iface];
 		interface Receive[uint8_t iface];
@@ -229,10 +226,6 @@ implementation {
 		}
 		return msg;
 	}
-
-	async command uint8_t SerialPacketInfo.offset() { return 0; }
-	async command uint8_t SerialPacketInfo.dataLinkLength(message_t* msg, uint8_t upperLen) { return upperLen; }
-	async command uint8_t SerialPacketInfo.upperLength(message_t* msg, uint8_t dataLinkLen) { return dataLinkLen; }
 
 	default command bool DeviceParameter.matches[uint8_t seqnum](const char* id) { return FALSE; }
 	default command error_t DeviceParameter.get[uint8_t seqnum]() { return EINVAL; }
