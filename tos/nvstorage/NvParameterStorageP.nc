@@ -71,7 +71,7 @@ implementation {
 	}
 
 	// L NNNNNNNNNNNNNNNN V..V CC
-	error_t storeParameter(void* addr, const char* name, uint8_t value[], uint8_t vlen) {
+	error_t storeParameter(void* addr, const char* name, void* value, uint8_t vlen) {
 		uint16_t crc;
 		uint8_t buffer[1+16+vlen+2];
 		buffer[0] = sizeof(buffer) - 1;
@@ -84,7 +84,7 @@ implementation {
 		return call InternalFlash.write(addr, buffer, sizeof(buffer));
 	}
 
-	uint8_t loadParameter(void* addr, char name[16+1], uint8_t value[], uint8_t* vlen) {
+	uint8_t loadParameter(void* addr, char name[16+1], void* value, uint8_t* vlen) {
 		uint8_t tlen;
 		if(call InternalFlash.read(addr, &tlen, 1) == SUCCESS) {
 			if((NVPARAMS_MIN_ELEMENT_SIZE <= tlen) && (tlen <= NVPARAMS_MAX_ELEMENT_SIZE)) {
@@ -235,7 +235,7 @@ implementation {
 		}
 	}
 
-	command error_t NvParameter.store[uint8_t param](const char* identifier, uint8_t pvalue[], uint8_t vlen) {
+	command error_t NvParameter.store[uint8_t param](const char* identifier, void* pvalue, uint8_t vlen) {
 		if(m_state == ST_ACTIVE) {
 			if(param < total_parameters) {
 				uint16_t saddr = NVPARAMS_DATA_START;
@@ -263,6 +263,6 @@ implementation {
 	}
 
 	default event bool NvParameter.matches[uint8_t param](const char* identifier) { return FALSE; }
-	default event error_t NvParameter.init[uint8_t param](uint8_t pvalue[], uint8_t vlen) { return EINVAL; }
+	default event error_t NvParameter.init[uint8_t param](void* pvalue, uint8_t vlen) { return EINVAL; }
 
 }

@@ -19,8 +19,8 @@ implementation {
 	DeviceParametersP.Timer -> TimerMilliC;
 
 	components SerialDispatcherC;
-	DeviceParametersP.Send -> SerialDispatcherC.Send[TOS_SERIAL_DEVICE_PARAMETERS_ID];
-	DeviceParametersP.Receive -> SerialDispatcherC.Receive[TOS_SERIAL_DEVICE_PARAMETERS_ID];
+	DeviceParametersP.Send[0] -> SerialDispatcherC.Send[TOS_SERIAL_DEVICE_PARAMETERS_ID];
+	DeviceParametersP.Receive[0] -> SerialDispatcherC.Receive[TOS_SERIAL_DEVICE_PARAMETERS_ID];
 	SerialDispatcherC.SerialPacketInfo[TOS_SERIAL_DEVICE_PARAMETERS_ID] -> DeviceParametersP.SerialPacketInfo;
 
 	components LocalIeeeEui64C;

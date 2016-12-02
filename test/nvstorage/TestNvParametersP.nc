@@ -30,7 +30,7 @@ implementation {
 		debug1("match '%s' == %d", identifier, match);
 		return match == 0;
 	}
-	event error_t Param8.init(uint8_t* pvalue, uint8_t vlen) {
+	event error_t Param8.init(void* pvalue, uint8_t vlen) {
 		debugb1("init %u", pvalue, vlen, vlen);
 		if(vlen == sizeof(uint8_t)) {
 			m_p8 = *((uint8_t*)pvalue);
@@ -44,7 +44,7 @@ implementation {
 		debug1("match '%s' == %d", identifier, match);
 		return match == 0;
 	}
-	event error_t Param16.init(uint8_t* pvalue, uint8_t vlen) {
+	event error_t Param16.init(void* pvalue, uint8_t vlen) {
 		debugb1("init %u", pvalue, vlen, vlen);
 		if(vlen == sizeof(uint16_t)) {
 			m_p16 = *((uint16_t*)pvalue);
@@ -58,7 +58,7 @@ implementation {
 		debug1("match '%s' == %d", identifier, match);
 		return match == 0;
 	}
-	event error_t Param32.init(uint8_t* pvalue, uint8_t vlen) {
+	event error_t Param32.init(void* pvalue, uint8_t vlen) {
 		debugb1("init %u", pvalue, vlen, vlen);
 		if(vlen == sizeof(uint32_t)) {
 			m_p32 = *((uint32_t*)pvalue);
