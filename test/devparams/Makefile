@@ -11,9 +11,10 @@ MAKEFILE_LOCATION := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)
 PFLAGS += -DTASKLET_IS_TASK
 
 PFLAGS += -I$(MAKEFILE_LOCATION)
-PFLAGS += -I$(MAKEFILE_LOCATION)/../../tos/devparam
-PFLAGS += -I$(MAKEFILE_LOCATION)/../../tos/devparam/params
-PFLAGS += -I$(MAKEFILE_LOCATION)/../../tos/nvstorage
+PFLAGS += -I$(MAKEFILE_LOCATION)/../../tos/interfaces
+PFLAGS += -I$(MAKEFILE_LOCATION)/../../tos/devparams
+PFLAGS += -I$(MAKEFILE_LOCATION)/../../tos/lib/devparam
+PFLAGS += -I$(MAKEFILE_LOCATION)/../../tos/lib/nvstorage
 
 # Get the MainC that configures correct boot sequence
 PFLAGS += -I$(MAKEFILE_LOCATION)/../nvstorage

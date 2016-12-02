@@ -11,7 +11,8 @@ MAKEFILE_LOCATION := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)
 PFLAGS += -DTASKLET_IS_TASK
 
 PFLAGS += -I$(MAKEFILE_LOCATION)
-PFLAGS += -I$(MAKEFILE_LOCATION)/../../tos/nvstorage
+PFLAGS += -I$(MAKEFILE_LOCATION)/../../tos/interfaces
+PFLAGS += -I$(MAKEFILE_LOCATION)/../../tos/lib/nvstorage
 
 BASE_LOG_LEVEL ?= 0xFFFF
 PLATFORM_BAUDRATE ?= 500000UL
