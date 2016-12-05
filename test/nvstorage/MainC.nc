@@ -24,11 +24,7 @@ implementation {
 
 	#if (defined(PRINTF_PORT) && !defined(TOSSIM))
 		#warning "PRINTF enabled"
-		#ifndef START_PRINTF_DELAY
-			#warning "default START_PRINTF_DELAY 1024"
-			#define START_PRINTF_DELAY 1024
-		#endif
-		components new StartPrintfC(START_PRINTF_DELAY) as Logging;
+		components StartPrintfC as Logging;
 	#else
 		components new DummyBootC() as Logging;
 	#endif

@@ -33,7 +33,11 @@ implementation {
 	components SerialActiveMessageC; // TODO actually should start a lower layer?
 	SeqSplitControlC.First -> SerialActiveMessageC;
 
+	components new RadioChannelManagerC(DEFAULT_RADIO_CHANNEL);
+	SeqSplitControlC.Second -> RadioChannelManagerC;
+
 	components ActiveMessageC;
-	SeqSplitControlC.Second -> ActiveMessageC;
+	RadioChannelManagerC.SubSplitControl -> ActiveMessageC.SplitControl;
+	RadioChannelManagerC.SubRadioChannel -> ActiveMessageC.RadioChannel;
 
 }
