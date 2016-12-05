@@ -7,6 +7,8 @@
 configuration TestDeviceParametersC { }
 implementation {
 
+	components MainC;
+
 	components UptimeParameterC;
 	components RebootParameterC;
 
@@ -15,14 +17,23 @@ implementation {
 	components BootInfoC;
 	components MCUSRInfoC;
 
+	components new TimerWatchdogC(5000);
+
 	// Enable communication through serial interface
 	components DeviceParametersSerialC;
+	// Enable communication over radio
+	components DeviceParametersActiveMessageC;
 
-	components MainC;
-	components new Boot2SplitControlC("b", "ser") as StartSerial;
-	StartSerial.Boot -> MainC;
+	components new Boot2SplitControlC("b", "seq");
+	Boot2SplitControlC.Boot -> MainC;
 
-	components SerialActiveMessageC;
-	StartSerial.SplitControl -> SerialActiveMessageC;
+	components new SeqSplitControlC("seq", "ser", "rdo");
+	Boot2SplitControlC.SplitControl -> SeqSplitControlC;
+
+	components SerialActiveMessageC; // TODO actually should start a lower layer?
+	SeqSplitControlC.First -> SerialActiveMessageC;
+
+	components ActiveMessageC;
+	SeqSplitControlC.Second -> ActiveMessageC;
 
 }
