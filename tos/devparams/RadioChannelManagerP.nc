@@ -157,7 +157,7 @@ implementation {
 			}
 			else if(result != SUCCESS) {
 				err1("start channel(%u) fail %u", m.current_channel, result);
-				signal SplitControl.startDone(SUCCESS); // Bad, but no good way to recover either
+				signal SplitControl.startDone(SUCCESS); // Bad, but no good way to recover either - could delay and try again
 			}
 		}
 		else {

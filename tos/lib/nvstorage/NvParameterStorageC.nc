@@ -17,7 +17,8 @@ configuration NvParameterStorageC {
 implementation {
 
 	#ifndef NVPARAMETER_STORAGE_ADDRESS
-	#define NVPARAMETER_STORAGE_ADDRESS 0
+	#warning NVPARAMETER_STORAGE_ADDRESS 1024
+	#define NVPARAMETER_STORAGE_ADDRESS 1024
 	#endif // NVPARAMETER_STORAGE_ADDRESS
 
 	components new NvParameterStorageP(NVPARAMETER_STORAGE_ADDRESS,
