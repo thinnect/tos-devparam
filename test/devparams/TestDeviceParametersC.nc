@@ -12,7 +12,7 @@ implementation {
 	components UptimeParameterC;
 	components RebootParameterC;
 
-	components GlobalPositioningSystemParameterC;
+	components DevicePositionParametersC;
 
 	components BootInfoC;
 	components MCUSRInfoC;

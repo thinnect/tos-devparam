@@ -142,7 +142,7 @@ implementation {
 
 				if(match) {
 					if(eaddr != saddr) { // There is a gap (for some reason)
-						debug1("move %p->%p %u", (void*)saddr, (void*)eaddr, plen);
+						info1("move %p->%p %u", (void*)saddr, (void*)eaddr, plen);
 						internalFlash_copy((void*)eaddr, (void*)saddr, plen);
 					}
 					eaddr += plen; // Move processed storage pointer ahead
@@ -190,6 +190,7 @@ implementation {
 		if(result == SUCCESS) {
 			uint16_t data_end = loadAllValues(NVPARAMS_DATA_START, hdr.length);
 			if(hdr.uidhash != IDENT_UIDHASH) {
+				info1("migrate %"PRIX32"->%"PRIX32, (uint32_t)hdr.uidhash, (uint32_t)IDENT_UIDHASH);
 				if(storage_data_length < hdr.length) {
 					internalFlash_erase((void*)(NVPARAMS_DATA_START+storage_data_length), storage_data_length-hdr.length);
 				}
