@@ -20,4 +20,7 @@ implementation {
 	components LocalIeeeEui64C;
 	DeviceIdentParametersP.LocalIeeeEui64 -> LocalIeeeEui64C;
 
+	components PCBVersionInfoC;
+	DeviceIdentParametersP.GetPCBVersion -> PCBVersionInfoC.PCBVersion;
+
 }

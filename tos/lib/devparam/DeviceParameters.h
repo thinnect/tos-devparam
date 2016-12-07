@@ -6,10 +6,19 @@
 #define DEVICEPARAMETERS_H_
 
  	#define UQ_DEVICE_PARAMETER_SEQNUM unique("DeviceParameter")
+	#define UQ_DEVICE_PARAMETER_INTERFACE_ID unique("DeviceParametersCommunicationsInterface")
+
+	enum DeviceParametersHeartbeatInterfaceEnum {
+		DP_HEARTBEAT_INTERFACE_ID = UQ_DEVICE_PARAMETER_INTERFACE_ID
+	};
 
 	#ifndef TOS_SERIAL_DEVICE_PARAMETERS_ID
  	#define TOS_SERIAL_DEVICE_PARAMETERS_ID 0x80
  	#endif // TOS_SERIAL_DEVICE_PARAMETERS_ID
+
+	#ifndef AMID_DEVICE_PARAMETERS
+	#define AMID_DEVICE_PARAMETERS 0x82
+	#endif // AMID_DEVICE_PARAMETERS
 
  	#ifndef DP_HEARTBEAT_PERIOD_S
  	#define DP_HEARTBEAT_PERIOD_S 30

@@ -3,6 +3,7 @@
  * @license MIT
  **/
 #include "DeviceParameters.h"
+#include "SemanticVersion.h"
 generic module DeviceIdentParametersP() {
 	provides {
 		interface DeviceParameter as Eui64;
@@ -15,6 +16,7 @@ generic module DeviceIdentParametersP() {
 	}
 	uses {
 		interface LocalIeeeEui64;
+		interface Get<semantic_version_t> as GetPCBVersion;
 	}
 }
 implementation {
@@ -78,11 +80,12 @@ implementation {
 
 	task void pcbversion() {
 		char id[sizeof(m_pcbversion_id)];
+		semantic_version_t pcbv = call GetPCBVersion.get();
 		uint8_t v[3];
 		strcpy_P(id, m_pcbversion_id);
-		v[0] = PCB_VERSION_MAJOR;
-		v[1] = PCB_VERSION_MINOR;
-		v[2] = PCB_VERSION_ASSEMBLY;
+		v[0] = pcbv.major;
+		v[1] = pcbv.minor;
+		v[2] = pcbv.patch;
 		signal PcbVersion.value(id, DP_TYPE_RAW, &v, sizeof(v));
 	}
 

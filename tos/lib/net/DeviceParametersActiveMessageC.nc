@@ -2,34 +2,30 @@
  * ActiveMessage communication setup for DeviceParameters.
  *
  * It is possible to wire multiple radios or layers in parallel, by creating a
- * similar configuration. DP_INTERFACE_ID should be generated with the same
- * unique string in all such configuraitons. +1 must be added, because interface
- * id 0 is reserved for direct serial (may not be in use, but should not be used
- * for AM).
+ * similar configuration. Special interface id U
  *
  * @author Raido Pahtma
  * @license MIT
  **/
+ #include "DeviceParameters.h"
 configuration DeviceParametersActiveMessageC { }
 implementation {
 
 	enum {
-		DP_INTERFACE_ID = 1 + unique("DeviceParametersActiveMessageInterface")
+		DP_INTERFACE_ID = UQ_DEVICE_PARAMETER_INTERFACE_ID
 	};
 
 	components DeviceParametersC;
 
 	components new AMResponseAdapterC();
+	DeviceParametersC.Send[DP_INTERFACE_ID] -> AMResponseAdapterC.Send;
+	DeviceParametersC.Receive[DP_INTERFACE_ID] -> AMResponseAdapterC.Receive;
 
-	components new AMSenderC(0x80);
+	components new AMSenderC(AMID_DEVICE_PARAMETERS);
 	AMResponseAdapterC.AMSend -> AMSenderC;
 	AMResponseAdapterC.AMPacket -> AMSenderC;
 
-	components new AMReceiverC(0x80);
+	components new AMReceiverC(AMID_DEVICE_PARAMETERS);
 	AMResponseAdapterC.AMReceive -> AMReceiverC;
-
-	components SerialDispatcherC;
-	DeviceParametersC.Send[DP_INTERFACE_ID] -> AMResponseAdapterC.Send;
-	DeviceParametersC.Receive[DP_INTERFACE_ID] -> AMResponseAdapterC.Receive;
 
 }
