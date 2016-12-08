@@ -24,8 +24,8 @@ implementation {
 	#define __LOG_LEVEL__ ( LOG_LEVEL_RadioChannelManagerP & BASE_LOG_LEVEL )
 	#include "log.h"
 
-	PROGMEM const char m_default_id[] = "default_radio_ch";
-    PROGMEM const char m_current_id[] = "current_radio_ch";
+	PROGMEM const char m_default_id[] = "radio_ch_default";
+    PROGMEM const char m_current_id[] = "radio_ch_current";
 
 	enum RadioChannelManagerStates {
 		ST_OFF,
