@@ -8,8 +8,15 @@
 #            devparam
 # --------------------------------------------------------------------
 PFLAGS += -I%T/lib/devparam
+
+DEVPARAM_DUMMY_STORAGE ?= 0
+ifneq ($(DEVPARAM_DUMMY_STORAGE),0)
+    PFLAGS += -I%T/lib/nvstorage/dummy
+endif
 PFLAGS += -I%T/lib/nvstorage
+
 PFLAGS += -I%T/lib/net
+
 PFLAGS += -I%T/devparams
 # --------------------------------------------------------------------
 #            ...
