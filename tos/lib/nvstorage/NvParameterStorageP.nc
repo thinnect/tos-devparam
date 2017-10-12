@@ -4,6 +4,7 @@
  * @author Raido Pahtma
  * @license MIT
  */
+#include <avr/wdt.h>
 #include "NvParameters.h"
 generic module NvParameterStorageP(uint16_t storage_area_start, uint16_t storage_data_length, uint8_t total_parameters) {
 	provides {
@@ -42,14 +43,16 @@ implementation {
 
 	void internalFlash_erase(void* addr, uint16_t length) {
 		uint8_t ff = 0xFF;
-		void* erase_addr = addr;
-		for(;erase_addr<addr+length;erase_addr++) {
+		uint8_t* erase_addr = addr;
+		for(;erase_addr<(uint8_t*)addr+length;erase_addr++) {
+			wdt_reset();
 			call InternalFlash.write(erase_addr, &ff, 1);
 		}
 	}
 
 	error_t internalFlash_copy(void* dest, void* source, uint16_t length) {
 		uint8_t buffer[length];
+		wdt_reset();
 		if(call InternalFlash.read(source, buffer, length) == SUCCESS) {
 			return call InternalFlash.write(dest, buffer, length);
 		}
@@ -57,6 +60,7 @@ implementation {
 	}
 
 	error_t loadHeader(nvparams_storage_header_t* hdr, uint16_t address) {
+		wdt_reset();
 		if(call InternalFlash.read((void*)address, hdr, sizeof(nvparams_storage_header_t)) == SUCCESS) {
 			uint16_t crc = call Crc.crc16(hdr, sizeof(nvparams_storage_header_t) - 2);
 			if(crc == hdr->crc) {
@@ -81,14 +85,17 @@ implementation {
 		buffer[sizeof(buffer)-1] = (uint8_t)(crc >> 8);
 		buffer[sizeof(buffer)-2] = (uint8_t)(crc);
 		debugb1("%p store %s", buffer, sizeof(buffer), addr, name);
+		wdt_reset();
 		return call InternalFlash.write(addr, buffer, sizeof(buffer));
 	}
 
 	uint8_t loadParameter(void* addr, char name[16+1], void* value, uint8_t* vlen) {
 		uint8_t tlen;
+		wdt_reset();
 		if(call InternalFlash.read(addr, &tlen, 1) == SUCCESS) {
 			if((NVPARAMS_MIN_ELEMENT_SIZE <= tlen) && (tlen <= NVPARAMS_MAX_ELEMENT_SIZE)) {
 				uint8_t buffer[1+tlen];
+				wdt_reset();
 				if(call InternalFlash.read(addr, buffer, sizeof(buffer)) == SUCCESS) {
 					uint16_t crc = (((uint16_t)buffer[sizeof(buffer)-1])<<8) | (uint16_t)(buffer[sizeof(buffer)-2]);
 					debugb1("%p load", buffer, sizeof(buffer), addr);
@@ -130,6 +137,7 @@ implementation {
 				bool match = FALSE;
 				uint8_t param;
 				for(param=0;param<total_parameters;param++) {
+					wdt_reset();
 					if(signal NvParameter.matches[param](name)) {
 						if(signal NvParameter.init[param](value, length) == SUCCESS) {
 							debugb1("init %s", value, length, name);
@@ -194,14 +202,18 @@ implementation {
 				if(storage_data_length < hdr.length) {
 					internalFlash_erase((void*)(NVPARAMS_DATA_START+storage_data_length), storage_data_length-hdr.length);
 				}
+				debug1("%"PRIu32" %"PRIu32" %"PRIu32, (uint32_t)storage_data_length, (uint32_t)data_end, (uint32_t)NVPARAMS_DATA_START);
 				if(data_end - NVPARAMS_DATA_START < storage_data_length) {
 					internalFlash_erase((void*)data_end, storage_data_length - (data_end - NVPARAMS_DATA_START));
 				}
 				hdr.uidhash = IDENT_UIDHASH;
 				hdr.length = storage_data_length;
 				hdr.crc = call Crc.crc16(&hdr, sizeof(hdr)-2);
+				debug1("A");
 				call InternalFlash.write((void*)(storage_area_start), &hdr, sizeof(hdr));
+				debug1("B");
 				call InternalFlash.write((void*)(storage_area_start + sizeof(hdr)), &hdr, sizeof(hdr));
+				debug1("ok");
 			}
 		}
 		else {
