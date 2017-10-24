@@ -23,7 +23,7 @@ implementation {
 	task void responseTask() {
 		char id[16+1];
 		strlcpy_P(id, m_appliance_id, sizeof(id));
-		signal DeviceParameter.value(id, DP_TYPE_STRING, &m_appliance, strnlen(m_appliance, sizeof(m_appliance)-1));
+		signal DeviceParameter.value(id, DP_TYPE_STRING, m_appliance, strnlen(m_appliance, sizeof(m_appliance)-1));
 	}
 
 	command error_t DeviceParameter.set(void* value, uint8_t length) {
