@@ -124,4 +124,19 @@
 		//nx_uint8_t id[];
 	} dp_error_parameter_id_t;
 
+#ifdef TOSSIM
+	#ifndef PROGMEM
+	#define PROGMEM
+	#endif// PROGMEM
+	size_t strlcpy_P(char* dst, const char* src, size_t dstsize) {
+		return strlcpy(dst, src, dstsize);
+	}
+	char* strcpy_P(char* destination, const char* source) {
+		return strcpy(destination, source);
+	}
+	int strcmp_P(const char* str1, const char* str2) {
+		return strcmp(str1, str2);
+	}
+#endif//TOSSIM
+
 #endif // DEVICEPARAMETERS_H_
