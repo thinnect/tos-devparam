@@ -21,8 +21,8 @@ implementation {
 	char m_appliance[32+1] = "";
 
 	task void responseTask() {
-		char id[16+1];
-		strlcpy_P(id, m_appliance_id, sizeof(id));
+		char id[sizeof(m_appliance_id)];
+		strcpy_P(id, m_appliance_id);
 		signal DeviceParameter.value(id, DP_TYPE_STRING, m_appliance, strnlen(m_appliance, sizeof(m_appliance)-1));
 	}
 
