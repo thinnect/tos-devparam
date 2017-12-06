@@ -46,9 +46,10 @@ implementation {
 	}
 
 	event void Timer.fired() {
-		#warning "This reboot solution only works for AVR"
-		wdt_enable(1);
-		while(1);
+		#warning "This reboot solution only works for SILABS"
+		NVIC_SystemReset();
+		// wdt_enable(1);
+		// while(1);
 	}
 
 	command error_t DeviceParameter.get() { return post rebootTimeTask(); }

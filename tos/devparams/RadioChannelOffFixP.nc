@@ -34,10 +34,10 @@ implementation {
 	}
 
 	command error_t RadioChannel.setChannel(uint8_t channel) {
-		if(m_radio_on) {
+		//if(m_radio_on) {
 			return call RealRadioChannel.setChannel(channel);
-		}
-		return EOFF;
+		// }
+		// return EOFF;
 	}
 
 	event void RealRadioChannel.setChannelDone() {
