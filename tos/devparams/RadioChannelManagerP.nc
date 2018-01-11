@@ -40,9 +40,10 @@ implementation {
 		uint8_t state : 3;
 		bool current_requested : 1;
 		bool change_requested : 1;
+		bool default_stored: 1;
 	} radio_channel_manager_state_t;
 
-	radio_channel_manager_state_t m = { default_radio_channel, default_radio_channel, ST_OFF, FALSE, FALSE };
+	radio_channel_manager_state_t m = { default_radio_channel, default_radio_channel, ST_OFF, FALSE, FALSE, FALSE};
 
 	task void defaultChannelTask() {
 		char id[sizeof(m_default_id)];
@@ -62,6 +63,12 @@ implementation {
 		m.current_requested = FALSE;
 	}
 
+	error_t storeDefaultChannel(uint8_t channel) {
+		char id[sizeof(m_default_id)];
+		strcpy_P(id, m_default_id);
+		return call StoredRadioChannel.store(id, &channel, sizeof(uint8_t));
+	}
+
 	command error_t DefaultChannelParameter.set(void* value, uint8_t length) {
 		if(length == sizeof(uint8_t)) {
 			uint8_t channel = *((uint8_t*)value);
@@ -70,10 +77,7 @@ implementation {
 				return SUCCESS;
 			}
 			else {
-				error_t err;
-				char id[sizeof(m_default_id)];
-				strcpy_P(id, m_default_id);
-				err = call StoredRadioChannel.store(id, value, sizeof(uint8_t));
+				error_t err = storeDefaultChannel(channel);
 				if(err == SUCCESS) {
 					m.default_channel = channel;
 					post defaultChannelTask();
@@ -119,6 +123,7 @@ implementation {
 		if(length == sizeof(uint8_t)) {
 			m.default_channel = *((uint8_t*)value);
 			m.current_channel = m.default_channel;
+			m.default_stored = TRUE;
 			return SUCCESS;
 		}
 		return ESIZE;
@@ -146,10 +151,21 @@ implementation {
 		signal SplitControl.startDone(SUCCESS);
 	}
 
+	void storeInitialDefault() {
+		if(m.default_stored == FALSE) { // default was not initialized - never been stored ... store it
+			if(m.current_channel == m.default_channel) {
+				if(storeDefaultChannel(m.current_channel) == SUCCESS) {
+					m.default_stored = TRUE;
+				}
+			}
+		}
+	}
+
 	event void SubSplitControl.startDone(error_t result) {
 		if(result == SUCCESS) {
 			result = call SubRadioChannel.setChannel(m.current_channel);
 			if(result == EALREADY) {
+				storeInitialDefault();
 				startDone();
 				if(m.current_requested) {
 					post currentChannelTask();
@@ -211,6 +227,9 @@ implementation {
 
 	event void SubRadioChannel.setChannelDone() {
 		m.current_channel = call SubRadioChannel.getChannel();
+
+		storeInitialDefault();
+
 		if(m.current_requested) {
 			post currentChannelTask();
 		}
