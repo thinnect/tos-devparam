@@ -30,25 +30,23 @@ implementation {
 	PROGMEM const char m_pcbversion_id[] = "pcb_version";
 
 	task void eui() {
-		char id[sizeof(m_eui_id)];
 		ieee_eui64_t eui64 = call LocalIeeeEui64.getId();
+		char id[sizeof(m_eui_id)];
 		strcpy_P(id, m_eui_id);
 		signal Eui64.value(id, DP_TYPE_RAW, &eui64, sizeof(eui64));
 	}
 
 	task void boardname() {
+		char bn[] = IDENT_BOARDNAME;
 		char id[sizeof(m_boardname_id)];
-		char bn[strlen(IDENT_BOARDNAME)];
 		strcpy_P(id, m_boardname_id);
-		memcpy(bn, IDENT_BOARDNAME, strlen(IDENT_BOARDNAME));
 		signal Boardname.value(id, DP_TYPE_STRING, &bn, sizeof(bn));
 	}
 
 	task void appname() {
+		char an[] = IDENT_APPNAME;
 		char id[sizeof(m_appname_id)];
-		char an[strlen(IDENT_APPNAME)];
 		strcpy_P(id, m_appname_id);
-		memcpy(an, IDENT_APPNAME, strlen(IDENT_APPNAME));
 		signal Appname.value(id, DP_TYPE_STRING, &an, sizeof(an));
 	}
 
