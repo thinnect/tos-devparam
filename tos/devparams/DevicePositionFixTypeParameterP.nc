@@ -3,11 +3,11 @@
  * @license MIT
  **/
 #include "DeviceParameters.h"
-generic module DevicePositionUtmZoneParameterP() {
+generic module DevicePositionFixTypeParameterP() {
 	provides {
-		interface Get<uint8_t>;
-		interface Set<uint8_t>;
-		interface Set<uint8_t> as Save;
+		interface Get<char>;
+		interface Set<char>;
+		interface Set<char> as Save;
 		interface DeviceParameter;
 	}
 	uses {
@@ -16,36 +16,36 @@ generic module DevicePositionUtmZoneParameterP() {
 }
 implementation {
 
-	PROGMEM const char m_zone_id[] = "utm_zone";
+	PROGMEM const char m_fix_id[] = "geo_fix_type";
 
-	uint8_t m_zone = 0;
+	char m_fix = 'U'; // U - unknown, F - fixed, G - GNSS, A - area, L - local positioning
 
-	command uint8_t Get.get() {
-		return m_zone;
+	command char Get.get() {
+		return m_fix;
 	}
 
-	command void Set.set(uint8_t value) {
-		m_zone = value;
+	command void Set.set(char value) {
+		m_fix = value;
 	}
 
-	command void Save.set(uint8_t value) {
-		call DeviceParameter.set(&value, sizeof(uint8_t));
+	command void Save.set(char value) {
+		call DeviceParameter.set(&value, sizeof(char));
 	}
 
 	task void responseTask() {
 		char id[16+1];
-		strcpy_P(id, m_zone_id);
-		signal DeviceParameter.value(id, DP_TYPE_UINT8, &m_zone, sizeof(uint8_t));
+		strcpy_P(id, m_fix_id);
+		signal DeviceParameter.value(id, DP_TYPE_STRING, &m_fix, sizeof(char));
 	}
 
 	command error_t DeviceParameter.set(void* value, uint8_t length) {
-		if(length == sizeof(uint8_t)) {
-			uint8_t v = *((uint8_t*)value);
-			if(v != m_zone) {
+		if(length == sizeof(char)) {
+			char v = *((char*)value);
+			if(v != m_fix) {
 				char id[16+1];
-				strcpy_P(id, m_zone_id);
+				strcpy_P(id, m_fix_id);
 				if(call NvParameter.store(id, &v, sizeof(v)) == SUCCESS) {
-					m_zone = v;
+					m_fix = v;
 					post responseTask();
 					return SUCCESS;
 				}
@@ -62,7 +62,7 @@ implementation {
 	}
 
 	bool matches(const char* identifier) {
-		return 0 == strcmp_P(identifier, m_zone_id);
+		return 0 == strcmp_P(identifier, m_fix_id);
 	}
 
 	command bool DeviceParameter.matches(const char* identifier) {
@@ -74,8 +74,8 @@ implementation {
 	}
 
 	event error_t NvParameter.init(void* value, uint8_t length) {
-		if(length == sizeof(uint8_t)) {
-			m_zone = *((uint8_t*)value);
+		if(length == sizeof(char)) {
+			m_fix = *((char*)value);
 			return SUCCESS;
 		}
 		return ESIZE;

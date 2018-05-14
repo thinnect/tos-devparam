@@ -7,6 +7,8 @@
 generic module DevicePositionParametersP() {
 	provides {
 		interface Get<int32_t>[uint8_t pos];
+		interface Set<int32_t>[uint8_t pos];
+		interface Set<int32_t> as Save[uint8_t pos];
 		interface DeviceParameter[uint8_t pos];
 	}
 	uses {
@@ -15,8 +17,8 @@ generic module DevicePositionParametersP() {
 }
 implementation {
 
-	PROGMEM const char m_latitude_id[]  = "gps_latitude";
-	PROGMEM const char m_longitude_id[] = "gps_longitude";
+	PROGMEM const char m_latitude_id[]  = "geo_latitude";
+	PROGMEM const char m_longitude_id[] = "geo_longitude";
 	PROGMEM const char m_elevation_id[] = "elevation";
 	PROGMEM const char m_northing_id[]  = "utm_northing";
 	PROGMEM const char m_easting_id[]   = "utm_easting";
@@ -29,6 +31,16 @@ implementation {
 
 	command int32_t Get.get[uint8_t pos]() {
 		return m_positions[pos];
+	}
+
+	command void Set.set[uint8_t pos](int32_t value) {
+		m_positions[pos] = value;
+	}
+
+	command void Save.set[uint8_t pos](int32_t value) {
+		nx_int32_t nxv;
+		nxv = value;
+		call DeviceParameter.set[pos](&nxv, sizeof(nx_int32_t));
 	}
 
 	char* parameterIdCopy(char* dest, uint8_t pos) {

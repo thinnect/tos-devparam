@@ -6,6 +6,8 @@
 generic module DevicePositionUtmBandParameterP() {
 	provides {
 		interface Get<char>;
+		interface Set<char>;
+		interface Set<char> as Save;
 		interface DeviceParameter;
 	}
 	uses {
@@ -20,6 +22,14 @@ implementation {
 
 	command char Get.get() {
 		return m_band;
+	}
+
+	command void Set.set(char value) {
+		m_band = value;
+	}
+
+	command void Save.set(char value) {
+		call DeviceParameter.set(&value, sizeof(char));
 	}
 
 	task void responseTask() {
