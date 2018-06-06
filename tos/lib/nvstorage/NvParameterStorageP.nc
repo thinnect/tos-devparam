@@ -171,7 +171,7 @@ implementation {
 		// The header is duplicated, to recover when a header write fails
 		// It is safe to run the upgrade procedure multiple times, storage area
 		// can only shrink with upgrade - default values are not stored
-		debug1("nvp %u %p+%u (%p>%p)", total_parameters,
+		debug2("nvp %u %p+%u (%p>%p)", total_parameters,
 		       (void*)storage_area_start, storage_data_length + 2*sizeof(nvparams_storage_header_t),
 		       (void*)NVPARAMS_DATA_START, (void*)NVPARAMS_DATA_END);
 
@@ -226,6 +226,7 @@ implementation {
 			internalFlash_erase((void*)(NVPARAMS_DATA_START), storage_data_length);
 		}
 
+		debug2("rdy %d", result);
 		return SUCCESS;
 	}
 
