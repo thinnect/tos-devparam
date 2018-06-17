@@ -11,6 +11,9 @@ implementation {
 	components DeviceParametersC;
 	DeviceParametersC.DeviceParameter[UQ_DEVICE_PARAMETER_SEQNUM] -> RebootParameterP.DeviceParameter;
 
+	components SystemControlC;
+	RebootParameterP.SystemControl -> SystemControlC;
+
 	components new TimerMilliC();
 	RebootParameterP.Timer -> TimerMilliC;
 

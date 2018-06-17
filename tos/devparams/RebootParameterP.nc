@@ -11,6 +11,7 @@ generic module RebootParameterP() {
 	}
 	uses {
 		interface Timer<TMilli>;
+		interface SystemControl;
 	}
 }
 implementation {
@@ -46,9 +47,7 @@ implementation {
 	}
 
 	event void Timer.fired() {
-		#warning "This reboot solution only works for AVR"
-		wdt_enable(1);
-		while(1);
+		call SystemControl.reboot(FALSE);
 	}
 
 	command error_t DeviceParameter.get() { return post rebootTimeTask(); }
