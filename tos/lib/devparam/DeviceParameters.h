@@ -5,6 +5,8 @@
 #ifndef DEVICEPARAMETERS_H_
 #define DEVICEPARAMETERS_H_
 
+	#include "IeeeEui64.h"
+
  	#define UQ_DEVICE_PARAMETER_SEQNUM unique("DeviceParameter")
 	#define UQ_DEVICE_PARAMETER_INTERFACE_ID unique("DeviceParametersCommunicationsInterface")
 
