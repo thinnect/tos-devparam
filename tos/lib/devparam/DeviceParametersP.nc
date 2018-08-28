@@ -112,7 +112,9 @@ implementation {
 				df->idlength = idlen;
 				df->valuelength = length;
 				memcpy(((uint8_t*)df)+sizeof(dp_parameter_t), fid, idlen);
-				memcpy(((uint8_t*)df)+sizeof(dp_parameter_t)+idlen, value, length);
+				if(length > 0) {
+					memcpy(((uint8_t*)df)+sizeof(dp_parameter_t)+idlen, value, length);
+				}
 
 				err = call Send.send[m_interface](&m_msg, sizeof(dp_parameter_t) + idlen + length);
 				logger(err == SUCCESS ? LOG_DEBUG1: LOG_WARN1, "vsnd [%02X]%s (%u)", seqnum, fid, err);
