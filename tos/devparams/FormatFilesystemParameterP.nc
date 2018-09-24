@@ -34,7 +34,7 @@ implementation {
 		if(m_value != value) {
 			char id[16+1];
 			strcpy_P(id, m_parameter_id);
-			if(call NvParameter.store(id, &value, sizeof(value) == SUCCESS)) {
+			if(call NvParameter.store(id, &value, sizeof(value)) == SUCCESS) {
 				m_value = value;
 				return SUCCESS;
 			}
