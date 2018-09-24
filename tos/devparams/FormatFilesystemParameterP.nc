@@ -26,16 +26,29 @@ implementation {
 		return m_value;
 	}
 
-	command void Set.set(char value) {
-		m_value = value;
-	}
-
 	command char GetSet.get() {
 		return m_value;
 	}
 
+	error_t setValue(char value) {
+		if(m_value != value) {
+			char id[16+1];
+			strcpy_P(id, m_parameter_id);
+			if(call NvParameter.store(id, &value, sizeof(value) == SUCCESS)) {
+				m_value = value;
+				return SUCCESS;
+			}
+			return ERETRY;
+		}
+		return EALREADY;
+	}
+
+	command void Set.set(char value) {
+		setValue(value);
+	}
+
 	command void GetSet.set(char value) {
-		m_value = value;
+		setValue(value);
 	}
 
 	task void responseTask() {
@@ -46,19 +59,12 @@ implementation {
 
 	command error_t DeviceParameter.set(void* value, uint8_t length) {
 		if(length == sizeof(m_value)) {
-			char v = *((char*)value);
-			if(v != 0) {
-				char id[16+1];
-				strcpy_P(id, m_parameter_id);
-				if(call NvParameter.store(id, &v, sizeof(v) == SUCCESS)) {
-					m_value = v;
-					post responseTask();
-					return SUCCESS;
-				}
-				return ERETRY;
+			error_t err = setValue(*((char*)value));
+			if((err == SUCCESS)||(err == EALREADY)) {
+				post responseTask();
+				return SUCCESS;
 			}
-			post responseTask();
-			return SUCCESS;
+			return err;
 		}
 		return EINVAL;
 	}
