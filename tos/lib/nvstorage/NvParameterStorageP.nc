@@ -148,6 +148,14 @@ implementation {
 					}
 				}
 
+				#ifdef NVPARAMS_STORAGE_NO_MIGRATION
+				#warning NVPARAMS_STORAGE_NO_MIGRATION
+				// Never discard variables. intended for recovery/migration builds
+				// that need access to some variables, but do not implement all
+				// variables used for normal builds
+				match = TRUE;
+				#endif//NVPARAMS_STORAGE_NO_MIGRATION
+
 				if(match) {
 					if(eaddr != saddr) { // There is a gap (for some reason)
 						info1("move %p->%p %u", (void*)saddr, (void*)eaddr, plen);
@@ -197,24 +205,28 @@ implementation {
 
 		if(result == SUCCESS) {
 			uint16_t data_end = loadAllValues(NVPARAMS_DATA_START, hdr.length);
-			if(hdr.uidhash != IDENT_UIDHASH) {
-				info1("migrate %"PRIX32"->%"PRIX32, (uint32_t)hdr.uidhash, (uint32_t)IDENT_UIDHASH);
-				if(storage_data_length < hdr.length) {
-					internalFlash_erase((void*)(NVPARAMS_DATA_START+storage_data_length), storage_data_length-hdr.length);
+			#ifndef NVPARAMS_STORAGE_NO_MIGRATION
+				if(hdr.uidhash != IDENT_UIDHASH) {
+					info1("migrate %"PRIX32"->%"PRIX32, (uint32_t)hdr.uidhash, (uint32_t)IDENT_UIDHASH);
+					if(storage_data_length < hdr.length) {
+						internalFlash_erase((void*)(NVPARAMS_DATA_START+storage_data_length), storage_data_length-hdr.length);
+					}
+					debug1("%"PRIu32" %"PRIu32" %"PRIu32, (uint32_t)storage_data_length, (uint32_t)data_end, (uint32_t)NVPARAMS_DATA_START);
+					if(data_end - NVPARAMS_DATA_START < storage_data_length) {
+						internalFlash_erase((void*)data_end, storage_data_length - (data_end - NVPARAMS_DATA_START));
+					}
+					hdr.uidhash = IDENT_UIDHASH;
+					hdr.length = storage_data_length;
+					hdr.crc = call Crc.crc16(&hdr, sizeof(hdr)-2);
+					debug1("A");
+					call InternalFlash.write((void*)(storage_area_start), &hdr, sizeof(hdr));
+					debug1("B");
+					call InternalFlash.write((void*)(storage_area_start + sizeof(hdr)), &hdr, sizeof(hdr));
+					debug1("ok");
 				}
-				debug1("%"PRIu32" %"PRIu32" %"PRIu32, (uint32_t)storage_data_length, (uint32_t)data_end, (uint32_t)NVPARAMS_DATA_START);
-				if(data_end - NVPARAMS_DATA_START < storage_data_length) {
-					internalFlash_erase((void*)data_end, storage_data_length - (data_end - NVPARAMS_DATA_START));
-				}
-				hdr.uidhash = IDENT_UIDHASH;
-				hdr.length = storage_data_length;
-				hdr.crc = call Crc.crc16(&hdr, sizeof(hdr)-2);
-				debug1("A");
-				call InternalFlash.write((void*)(storage_area_start), &hdr, sizeof(hdr));
-				debug1("B");
-				call InternalFlash.write((void*)(storage_area_start + sizeof(hdr)), &hdr, sizeof(hdr));
-				debug1("ok");
-			}
+			#else
+				debug1("ldd %d", data_end);
+			#endif//NVPARAMS_STORAGE_NO_MIGRATION
 		}
 		else {
 			strncpy_P(hdr.storage_key, storage_header_key, strlen_P(storage_header_key));
