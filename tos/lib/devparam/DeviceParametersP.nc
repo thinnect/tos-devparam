@@ -157,7 +157,10 @@ implementation {
 							if(err == SUCCESS) {
 								m_interface = iface;
 							}
-							else warn1("g %u", seqnum);
+							else {
+								warn1("g %u", seqnum);
+								errorId(iface, TRUE, err, ((uint8_t*)payload) + sizeof(dp_get_parameter_id_t), gf->idlength);
+							}
 						}
 						else { // No such parameter found
 							errorId(iface, FALSE, EINVAL, ((uint8_t*)payload) + sizeof(dp_get_parameter_id_t), gf->idlength);
@@ -172,7 +175,10 @@ implementation {
 							if(err == SUCCESS) {
 								m_interface = iface;
 							}
-							else warn1("g %u", gf->seqnum);
+							else {
+								warn1("g %u", gf->seqnum);
+								errorSeqnum(iface, TRUE, err, gf->seqnum);
+							}
 						}
 						else { // No such parameter
 							errorSeqnum(iface, FALSE, EINVAL, gf->seqnum);
