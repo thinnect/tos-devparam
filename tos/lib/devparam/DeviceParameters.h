@@ -23,7 +23,7 @@
 	#endif // AMID_DEVICE_PARAMETERS
 
  	#ifndef DP_HEARTBEAT_PERIOD_S
- 	#define DP_HEARTBEAT_PERIOD_S 30
+ 	#define DP_HEARTBEAT_PERIOD_S 0
  	#endif // DP_HEARTBEAT_PERIOD_S
 
 	enum DeviceParametersHeader {
