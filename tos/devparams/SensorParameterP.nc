@@ -5,6 +5,9 @@
  * @license MIT
  **/
 #include "DeviceParameters.h"
+
+PROGMEM const char g_sensorparameter_fmt[] = "sens_%s";
+
 generic module SensorParameterP(char sensor_name[], typedef value_type @number()) {
 	provides {
 		interface DeviceParameter;
@@ -15,15 +18,13 @@ generic module SensorParameterP(char sensor_name[], typedef value_type @number()
 }
 implementation {
 
-	PROGMEM const char m_parameter_id[] = "sens_%s";
-
 	command error_t DeviceParameter.get() {
 		return call Read.read();
 	}
 
 	event void Read.readDone(error_t result, value_type value) {
-		char id[sizeof(m_parameter_id)+strlen(sensor_name)];
-		sprintf_P(id, m_parameter_id, sensor_name);
+		char id[sizeof(g_sensorparameter_fmt)+strlen(sensor_name)];
+		sprintf_P(id, g_sensorparameter_fmt, sensor_name);
 
 		if(result == SUCCESS) {
 			nx_int32_t ivalue;
@@ -38,8 +39,8 @@ implementation {
 	command error_t DeviceParameter.set(void* value, uint8_t length) { return FAIL; }
 
 	command bool DeviceParameter.matches(const char* identifier) {
-		char id[sizeof(m_parameter_id)+strlen(sensor_name)];
-		sprintf_P(id, m_parameter_id, sensor_name);
+		char id[sizeof(g_sensorparameter_fmt)+strlen(sensor_name)];
+		sprintf_P(id, g_sensorparameter_fmt, sensor_name);
 		return 0 == strcmp(identifier, id);
 	}
 
